@@ -16,7 +16,7 @@ const App = () => {
   });
 
   const validationSchema = Yup.object().shape({
-    scheduleTabInput: Yup.string().required('Required'),
+    scheduleTabInput: Yup.string().matches(/^(hi|bye)$/, 'field muyst either be "hi" or "bye"').required('Required'),
     scheduleTabSelect: Yup.string().required('Required'),
     audienceTabInput: Yup.string().required('Required'),
     audienceTabSelect: Yup.string().required('Required'),
@@ -43,11 +43,15 @@ const App = () => {
     switch (tab) {
       case 'scheduleTab':
         formik.validateField('scheduleTabInput');
+        formik.setFieldTouched('scheduleTabInput', true);
         formik.validateField('scheduleTabSelect');
+        formik.setFieldTouched('scheduleTabSelect', true);
         break;
       case 'audienceTab':
         formik.validateField('audienceTabInput');
+        formik.setFieldTouched('audienceTabInput', true);
         formik.validateField('audienceTabSelect');
+        formik.setFieldTouched('audienceTabSelect', true);
         break;
       default:
         break;
@@ -58,6 +62,8 @@ const App = () => {
     runTabValidation(activeTab);
     setActiveTab(key);
   };
+
+  const errorKeys = Object.keys(formik.errors)
 
   useEffect(() => {
     const tabErrorState = Object.keys(formik.errors).reduce(
@@ -75,8 +81,36 @@ const App = () => {
         audienceTabInvalid: false,
       },
     );
-    setTabErrorState(tabErrorState);
-  }, [formik?.errors, setTabErrorState]);
+
+    const tabErrorStateTouched = Object.keys(formik.touched).reduce(
+        (tabErrorState, touched) => {
+          if (!tabErrorState.scheduleTabInvalid) {
+            tabErrorState.scheduleTabInvalid = touched.includes('scheduleTab') && errorKeys.includes(touched);
+          }
+          if (!tabErrorState.audienceTabInvalid) {
+            tabErrorState.audienceTabInvalid = touched.includes('audienceTab') && errorKeys.includes(touched);
+          }
+          return tabErrorState
+        }
+        ,
+        {
+          scheduleTabInvalid: false,
+          audienceTabInvalid: false,
+        },
+    )
+    console.log('tabErrorState', tabErrorState)
+    console.log('tabErrorStateTouched', tabErrorStateTouched)
+
+    const tabErrorAndTouchedState = {}
+    for (const property in tabErrorState) {
+      tabErrorAndTouchedState[property] = tabErrorState[property] && tabErrorStateTouched[property]
+    }
+
+    setTabErrorState(tabErrorAndTouchedState);
+  }, [formik?.errors, setTabErrorState, activeTab]);
+  console.log('tabErrorState', tabErrorState)
+  console.log('touched', formik.touched)
+  console.log('errors', formik.errors)
 
   return (
     <>
