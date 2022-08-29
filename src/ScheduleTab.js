@@ -64,6 +64,9 @@ const ScheduleTab = ({ formik }) => {
                             >
                               +
                             </button>
+                              {(formik?.touched?.friends?.[index] && formik?.errors?.friends?.[index]) &&
+                                  <p style={{color: 'red'}}>{formik?.errors?.friends?.[index]}</p>
+                              }
                           </div>
                       ))
                   ) : (

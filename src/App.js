@@ -37,6 +37,7 @@ const App = () => {
   });
 
   const lockForProofing = async () => {
+    console.log('lock for proofing called');
     const errors = await formik.validateForm();
     if (isEmpty(errors)) {
       console.table(formik.values);
