@@ -1,4 +1,5 @@
 import { Input, Select } from 'antd';
+import {Field, FieldArray, FormikProvider} from "formik";
 const { Option } = Select;
 
 const ScheduleTab = ({ formik }) => {
@@ -41,6 +42,43 @@ const ScheduleTab = ({ formik }) => {
           <p style={{ color: 'red' }}>{formik?.errors?.scheduleTabSelect}</p>
         )}
       </div>
+      <h1>Field Array Testing</h1>
+      <FormikProvider value={formik}>
+        <FieldArray
+            name="friends"
+            render={arrayHelpers => (
+                <div>
+                  {formik.values.friends && formik.values.friends.length > 0 ? (
+                      formik.values.friends.map((friend, index) => (
+                          <div key={index}>
+                            <Field name={`friends.${index}`} />
+                            <button
+                                type="button"
+                                onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
+                            >
+                              -
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => arrayHelpers.insert(index, '')} // insert an empty string at a position
+                            >
+                              +
+                            </button>
+                          </div>
+                      ))
+                  ) : (
+                      <button type="button" onClick={() => arrayHelpers.push('')}>
+                        {/* show this when user has removed all friends from the list */}
+                        Add a friend
+                      </button>
+                  )}
+                  <div>
+                    <button type="submit">Submit</button>
+                  </div>
+                </div>
+            )}
+        />
+      </FormikProvider>
     </>
   );
 };

@@ -20,6 +20,9 @@ const App = () => {
     scheduleTabSelect: Yup.string().required('Required'),
     audienceTabInput: Yup.string().required('Required'),
     audienceTabSelect: Yup.string().required('Required'),
+    friends: Yup.array().of(
+        Yup.string().required('Dynamic Field Required')
+    )
   });
 
   const formik = useFormik({
@@ -28,6 +31,7 @@ const App = () => {
       scheduleTabSelect: '',
       audienceTabInput: '',
       audienceTabSelect: '',
+      friends: [],
     },
     validationSchema,
   });
@@ -66,22 +70,6 @@ const App = () => {
   const errorKeys = Object.keys(formik.errors)
 
   useEffect(() => {
-    const tabErrorState = Object.keys(formik.errors).reduce(
-      (tabErrorState, error) => {
-        if (!tabErrorState.scheduleTabInvalid) {
-          tabErrorState.scheduleTabInvalid = error.includes('scheduleTab');
-        }
-        if (!tabErrorState.audienceTabInvalid) {
-          tabErrorState.audienceTabInvalid = error.includes('audienceTab');
-        }
-        return tabErrorState;
-      },
-      {
-        scheduleTabInvalid: false,
-        audienceTabInvalid: false,
-      },
-    );
-
     const tabErrorStateTouched = Object.keys(formik.touched).reduce(
         (tabErrorState, touched) => {
           if (!tabErrorState.scheduleTabInvalid) {
@@ -101,16 +89,9 @@ const App = () => {
     console.log('tabErrorState', tabErrorState)
     console.log('tabErrorStateTouched', tabErrorStateTouched)
 
-    const tabErrorAndTouchedState = {}
-    for (const property in tabErrorState) {
-      tabErrorAndTouchedState[property] = tabErrorState[property] && tabErrorStateTouched[property]
-    }
-
-    setTabErrorState(tabErrorAndTouchedState);
+    setTabErrorState(tabErrorStateTouched);
   }, [formik?.errors, setTabErrorState, activeTab]);
-  console.log('tabErrorState', tabErrorState)
-  console.log('touched', formik.touched)
-  console.log('errors', formik.errors)
+  console.log('formik', JSON.stringify( formik, null, 2))
 
   return (
     <>
