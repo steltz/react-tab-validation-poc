@@ -51,7 +51,7 @@ const ScheduleTab = ({ formik }) => {
                   {formik.values.dynamicFields && formik.values.dynamicFields.length > 0 ? (
                       formik.values.dynamicFields.map((dynamicField, index) => (
                           <div key={index} style={{marginBottom: '16px'}}>
-                            <Field name={`dynamicFields.${index}`} />
+                            <Field name={`dynamicFields.${index}`} placeholder={`Field #${index + 1}`} />
                             <button
                                 type="button"
                                 onClick={() => arrayHelpers.remove(index)} // remove a dynamicField from the list
