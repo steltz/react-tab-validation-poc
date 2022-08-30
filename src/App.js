@@ -30,11 +30,14 @@ const audienceFields = {
   }
 }
 
+// should be enum but this repo is not using typescript
+const tabs = ['schedule' , 'audience']
+
 const fieldConfig = {
-  schedule: {
+  [tabs[0]]: {
     ...scheduleFields
   },
-  audience: {
+  [tabs[1]]: {
     ...audienceFields
   }
 }
@@ -87,36 +90,31 @@ const App = () => {
     }
   };
 
-
   const onChange = (key) => {
     runTabValidation(activeTab);
     setActiveTab(key);
   };
 
-  const errorKeys = Object.keys(formik.errors)
 
   useEffect(() => {
-    console.log('useEffect ran');
-    const tabErrorStateTouched = Object.keys(formik.touched).reduce(
-        (tabErrorState, touched) => {
-          if (!tabErrorState.scheduleTabInvalid) {
-            tabErrorState.scheduleTabInvalid = touched.includes('scheduleTab') && errorKeys.includes(touched);
-          }
-          if (!tabErrorState.audienceTabInvalid) {
-            tabErrorState.audienceTabInvalid = touched.includes('audienceTab') && errorKeys.includes(touched);
-          }
-          return tabErrorState
-        }
-        ,
-        {
-          scheduleTabInvalid: false,
-          audienceTabInvalid: false,
-        },
-    )
+    const errorKeys = Object.keys(formik.errors)
 
-    setTabErrorState(tabErrorStateTouched);
+    const tabErrorState2 = tabs.reduce((acc, tab) => (
+       {...acc, [tab]: false}
+    ), {})
+
+    for (const tab of tabs) {
+      for (const field of Object.keys(fieldConfig[tab])) {
+        if (!tabErrorState2[tab]) {
+          tabErrorState2[tab] = Object.keys(formik.touched).includes(field) && errorKeys.includes(field)
+        }
+      }
+    }
+    console.log('tabErrorState2', tabErrorState2)
+
+    setTabErrorState(tabErrorState2);
   }, [formik?.errors, setTabErrorState, activeTab]);
-  console.log('formik', JSON.stringify( formik, null, 2))
+  // console.log('formik', JSON.stringify( formik, null, 2))
 
   return (
     <>
@@ -137,7 +135,7 @@ const App = () => {
           <Tabs defaultActiveKey="scheduleTab" centered onChange={onChange}>
             <TabPane
               tab={
-                tabErrorState.scheduleTabInvalid
+                tabErrorState.schedule
                   ? '!Schedule Error!'
                   : 'Schedule'
               }
@@ -147,7 +145,7 @@ const App = () => {
             </TabPane>
             <TabPane
               tab={
-                tabErrorState.audienceTabInvalid
+                tabErrorState.audience
                   ? '!Audience Error!'
                   : 'Audience'
               }
