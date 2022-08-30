@@ -47,13 +47,13 @@ const fieldConfig = {
 const App = () => {
   const [activeTab, setActiveTab] = useState('scheduleTab');
   const [tabErrorState, setTabErrorState] = useState({
-    scheduleTabInvalid: false,
-    audienceTabInvalid: false,
+    schedule: false,
+    audience: false,
   });
 
   const validationSchema = Yup.object().shape({
-    ...scheduleFieldsValidation.validation,
-    ...audienceFieldsValidation.validation,
+    ...scheduleFieldsValidation,
+    ...audienceFieldsValidation,
   });
 
   const formik = useFormik({
@@ -64,23 +64,20 @@ const App = () => {
     validationSchema,
   });
 
+  const validateTab = (tab) => {
+    for (const field of Object.keys(fieldConfig[tab])) {
+        formik.validateField(field);
+        formik.setFieldTouched(field);
+    }
+  }
+
   const runTabValidation = (tab) => {
     switch (tab) {
       case 'scheduleTab':
-          for (const field of Object.keys(fieldConfig.schedule)) {
-            if (field !== 'validation') {
-              formik.validateField(field);
-              formik.setFieldTouched(field);
-            }
-          }
+          validateTab('schedule')
         break;
       case 'audienceTab':
-        for (const field of Object.keys(fieldConfig.audience)) {
-          if (field !== 'validation') {
-            formik.validateField(field);
-            formik.setFieldTouched(field);
-          }
-        }
+          validateTab('audience')
         break;
       default:
         break;
@@ -104,11 +101,9 @@ const App = () => {
 
   useEffect(() => {
     const errorKeys = Object.keys(formik.errors)
-
     const tabErrorState2 = tabs.reduce((acc, tab) => (
        {...acc, [tab]: false}
     ), {})
-
     for (const tab of tabs) {
       for (const field of Object.keys(fieldConfig[tab])) {
         if (!tabErrorState2[tab]) {
@@ -116,8 +111,6 @@ const App = () => {
         }
       }
     }
-    // console.log('tabErrorState2', tabErrorState2)
-
     setTabErrorState(tabErrorState2);
   }, [formik?.errors, setTabErrorState, activeTab]);
   // console.log('formik', JSON.stringify( formik, null, 2))
