@@ -1,7 +1,7 @@
 import 'antd/dist/antd.css';
 import { Tabs, Col, Row, Button } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useFormik } from 'formik';
+import {setNestedObjectValues, useFormik} from 'formik';
 import ScheduleTab from './ScheduleTab';
 import AudienceTab from './AudienceTab';
 import * as Yup from 'yup';
@@ -16,11 +16,11 @@ const App = () => {
   });
 
   const validationSchema = Yup.object().shape({
-    scheduleTabInput: Yup.string().matches(/^(hi|bye)$/, 'field muyst either be "hi" or "bye"').required('Required'),
+    scheduleTabInput: Yup.string().matches(/^(hi|bye)$/, 'field must either be "hi" or "bye"').required('Required'),
     scheduleTabSelect: Yup.string().required('Required'),
     audienceTabInput: Yup.string().required('Required'),
     audienceTabSelect: Yup.string().required('Required'),
-    friends: Yup.array().of(
+    dynamicFields: Yup.array().of(
         Yup.string().required('Dynamic Field Required')
     )
   });
@@ -31,15 +31,15 @@ const App = () => {
       scheduleTabSelect: '',
       audienceTabInput: '',
       audienceTabSelect: '',
-      friends: [],
+      dynamicFields: ['field1'],
     },
     validationSchema,
   });
 
   const lockForProofing = async () => {
-    console.log('lock for proofing called');
     const errors = await formik.validateForm();
-    if (isEmpty(errors)) {
+    if (!isEmpty(errors)) {
+      await formik.setTouched(setNestedObjectValues(errors, true));
       console.table(formik.values);
     }
   };
@@ -87,8 +87,6 @@ const App = () => {
           audienceTabInvalid: false,
         },
     )
-    console.log('tabErrorState', tabErrorState)
-    console.log('tabErrorStateTouched', tabErrorStateTouched)
 
     setTabErrorState(tabErrorStateTouched);
   }, [formik?.errors, setTabErrorState, activeTab]);

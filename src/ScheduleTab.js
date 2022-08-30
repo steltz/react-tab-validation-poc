@@ -19,7 +19,7 @@ const ScheduleTab = ({ formik }) => {
         <Input
           placeholder="Basic usage"
           onChange={inputChanged}
-          onBlur={() => formik.validateField('scheduleTabInput')}
+          onBlur={() => {formik.validateField('scheduleTabInput'); formik.setFieldTouched('scheduleTabInput')}}
           status={formik?.touched?.scheduleTabInput && formik?.errors?.scheduleTabInput ? 'error' : ''}
         />
         {formik?.touched?.scheduleTabInput && formik?.errors?.scheduleTabInput && (
@@ -30,7 +30,7 @@ const ScheduleTab = ({ formik }) => {
         <Select
           placeholder="Select treatment"
           onChange={selectChanged}
-          onBlur={() => formik.validateField('scheduleTabSelect')}
+          onBlur={() => {formik.validateField('scheduleTabSelect'); formik.setFieldTouched('scheduleTabSelect')}}
           status={formik?.touched?.scheduleTabSelect && formik?.errors?.scheduleTabSelect ? 'error' : ''}
         >
           <Option value="treatment-1">Treatment 1</Option>
@@ -45,34 +45,34 @@ const ScheduleTab = ({ formik }) => {
       <h1>Field Array Testing</h1>
       <FormikProvider value={formik}>
         <FieldArray
-            name="friends"
+            name="dynamicFields"
             render={arrayHelpers => (
                 <div>
-                  {formik.values.friends && formik.values.friends.length > 0 ? (
-                      formik.values.friends.map((friend, index) => (
-                          <div key={index}>
-                            <Field name={`friends.${index}`} />
+                  {formik.values.dynamicFields && formik.values.dynamicFields.length > 0 ? (
+                      formik.values.dynamicFields.map((dynamicField, index) => (
+                          <div key={index} style={{marginBottom: '16px'}}>
+                            <Field name={`dynamicFields.${index}`} />
                             <button
                                 type="button"
-                                onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
+                                onClick={() => arrayHelpers.remove(index)} // remove a dynamicField from the list
                             >
-                              -
+                              Remove Field
                             </button>
                             <button
                                 type="button"
                                 onClick={() => arrayHelpers.insert(index, '')} // insert an empty string at a position
                             >
-                              +
+                              Add Field
                             </button>
-                              {(formik?.touched?.friends?.[index] && formik?.errors?.friends?.[index]) &&
-                                  <p style={{color: 'red'}}>{formik?.errors?.friends?.[index]}</p>
+                              {(formik?.touched?.dynamicFields?.[index] && formik?.errors?.dynamicFields?.[index]) &&
+                                  <p style={{color: 'red'}}>{formik?.errors?.dynamicFields?.[index]} for field #{index + 1}</p>
                               }
                           </div>
                       ))
                   ) : (
                       <button type="button" onClick={() => arrayHelpers.push('')}>
-                        {/* show this when user has removed all friends from the list */}
-                        Add a friend
+                        {/* show this when user has removed all dynamicFields from the list */}
+                        Add a dynamicField
                       </button>
                   )}
                   <div>
