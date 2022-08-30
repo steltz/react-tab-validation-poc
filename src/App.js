@@ -45,7 +45,7 @@ const fieldConfig = {
 }
 
 const App = () => {
-  const [activeTab, setActiveTab] = useState('scheduleTab');
+  const [activeTab, setActiveTab] = useState('schedule');
   const [tabErrorState, setTabErrorState] = useState({
     schedule: false,
     audience: false,
@@ -64,23 +64,10 @@ const App = () => {
     validationSchema,
   });
 
-  const validateTab = (tab) => {
-    for (const field of Object.keys(fieldConfig[tab])) {
-        formik.validateField(field);
-        formik.setFieldTouched(field);
-    }
-  }
-
   const runTabValidation = (tab) => {
-    switch (tab) {
-      case 'scheduleTab':
-          validateTab('schedule')
-        break;
-      case 'audienceTab':
-          validateTab('audience')
-        break;
-      default:
-        break;
+    for (const field of Object.keys(fieldConfig[tab])) {
+      formik.validateField(field);
+      formik.setFieldTouched(field);
     }
   };
 
@@ -131,14 +118,14 @@ const App = () => {
       </Row>
       <Row>
         <Col span={12} offset={6}>
-          <Tabs defaultActiveKey="scheduleTab" centered onChange={onChange}>
+          <Tabs defaultActiveKey="schedule" centered onChange={onChange}>
             <TabPane
               tab={
                 tabErrorState.schedule
                   ? '!Schedule Error!'
                   : 'Schedule'
               }
-              key="scheduleTab"
+              key="schedule"
             >
               <ScheduleTab formik={formik} />
             </TabPane>
@@ -148,7 +135,7 @@ const App = () => {
                   ? '!Audience Error!'
                   : 'Audience'
               }
-              key="audienceTab"
+              key="audience"
             >
               <AudienceTab formik={formik} />
             </TabPane>
