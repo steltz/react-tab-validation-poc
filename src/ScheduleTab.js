@@ -45,13 +45,13 @@ const ScheduleTab = ({ formik }) => {
       <h1>Field Array Testing</h1>
       <FormikProvider value={formik}>
         <FieldArray
-            name="dynamicFields"
+            name="scheduleTabDynamicField"
             render={arrayHelpers => (
                 <div>
-                  {formik.values.dynamicFields && formik.values.dynamicFields.length > 0 ? (
-                      formik.values.dynamicFields.map((dynamicField, index) => (
+                  {formik.values.scheduleTabDynamicField && formik.values.scheduleTabDynamicField.length > 0 ? (
+                      formik.values.scheduleTabDynamicField.map((dynamicField, index) => (
                           <div key={index} style={{marginBottom: '16px'}}>
-                            <Field name={`dynamicFields.${index}`} placeholder={`Field #${index + 1}`} />
+                            <Field name={`scheduleTabDynamicField.${index}`} placeholder={`Field #${index + 1}`} />
                             <button
                                 type="button"
                                 onClick={() => arrayHelpers.remove(index)} // remove a dynamicField from the list
@@ -64,14 +64,14 @@ const ScheduleTab = ({ formik }) => {
                             >
                               Add Field
                             </button>
-                              {(formik?.touched?.dynamicFields?.[index] && formik?.errors?.dynamicFields?.[index]) &&
-                                  <p style={{color: 'red'}}>{formik?.errors?.dynamicFields?.[index]} for field #{index + 1}</p>
+                              {(formik?.touched?.scheduleTabDynamicField?.[index] && formik?.errors?.scheduleTabDynamicField?.[index]) &&
+                                  <p style={{color: 'red'}}>{formik?.errors?.scheduleTabDynamicField?.[index]} for field #{index + 1}</p>
                               }
                           </div>
                       ))
                   ) : (
                       <button type="button" onClick={() => arrayHelpers.push('')}>
-                        {/* show this when user has removed all dynamicFields from the list */}
+                        {/* show this when user has removed all scheduleTabDynamicField from the list */}
                         Add a dynamicField
                       </button>
                   )}

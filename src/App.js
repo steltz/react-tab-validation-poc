@@ -11,12 +11,23 @@ const { TabPane } = Tabs;
 const scheduleFields = {
   scheduleTabInput: '',
   scheduleTabSelect: '',
-  dynamicFields: ['field1'],
+  scheduleTabDynamicField: ['field1'],
+  validation: {
+    scheduleTabInput: Yup.string().matches(/^(hi|bye)$/, 'field must either be "hi" or "bye"').required('Required'),
+    scheduleTabSelect: Yup.string().required('Required'),
+    scheduleTabDynamicField: Yup.array().of(
+        Yup.string().required('Dynamic Field Required')
+    )
+  }
 }
 
 const audienceFields = {
   audienceTabSelect: '',
   audienceTabInput: '',
+  validation: {
+    audienceTabInput: Yup.string().required('Required'),
+    audienceTabSelect: Yup.string().required('Required'),
+  }
 }
 
 const fieldConfig = {
@@ -36,13 +47,8 @@ const App = () => {
   });
 
   const validationSchema = Yup.object().shape({
-    scheduleTabInput: Yup.string().matches(/^(hi|bye)$/, 'field must either be "hi" or "bye"').required('Required'),
-    scheduleTabSelect: Yup.string().required('Required'),
-    audienceTabInput: Yup.string().required('Required'),
-    audienceTabSelect: Yup.string().required('Required'),
-    dynamicFields: Yup.array().of(
-        Yup.string().required('Dynamic Field Required')
-    )
+    ...scheduleFields.validation,
+    ...audienceFields.validation,
   });
 
   const formik = useFormik({
