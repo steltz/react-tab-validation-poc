@@ -113,7 +113,7 @@ const App = () => {
     }
     setTabErrorState(tabErrorState2);
   }, [formik?.errors, setTabErrorState, activeTab]);
-  // console.log('formik', JSON.stringify( formik, null, 2))
+  console.log('formik', JSON.stringify( formik, null, 2))
 
   return (
     <>

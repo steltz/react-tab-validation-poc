@@ -64,7 +64,7 @@ const ScheduleTab = ({ formik }) => {
                             >
                               Add Field
                             </button>
-                              {(formik?.touched?.scheduleTabDynamicField?.[index] && formik?.errors?.scheduleTabDynamicField?.[index]) &&
+                              {((formik?.touched?.scheduleTabDynamicField === true || formik?.touched?.scheduleTabDynamicField?.[index]) && formik?.errors?.scheduleTabDynamicField?.[index]) &&
                                   <p style={{color: 'red'}}>{formik?.errors?.scheduleTabDynamicField?.[index]} for field #{index + 1}</p>
                               }
                           </div>
