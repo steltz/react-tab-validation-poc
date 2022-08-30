@@ -8,6 +8,26 @@ import * as Yup from 'yup';
 import { isEmpty } from 'lodash';
 const { TabPane } = Tabs;
 
+const scheduleFields = {
+  scheduleTabInput: '',
+  scheduleTabSelect: '',
+  dynamicFields: ['field1'],
+}
+
+const audienceFields = {
+  audienceTabSelect: '',
+  audienceTabInput: '',
+}
+
+const fieldConfig = {
+  schedule: {
+    ...scheduleFields
+  },
+  audience: {
+    ...audienceFields
+  }
+}
+
 const App = () => {
   const [activeTab, setActiveTab] = useState('scheduleTab');
   const [tabErrorState, setTabErrorState] = useState({
@@ -27,22 +47,11 @@ const App = () => {
 
   const formik = useFormik({
     initialValues: {
-      scheduleTabInput: '',
-      scheduleTabSelect: '',
-      audienceTabInput: '',
-      audienceTabSelect: '',
-      dynamicFields: ['field1'],
+      ...fieldConfig.schedule,
+      ...fieldConfig.audience,
     },
     validationSchema,
   });
-
-  const lockForProofing = async () => {
-    const errors = await formik.validateForm();
-    if (!isEmpty(errors)) {
-      await formik.setTouched(setNestedObjectValues(errors, true));
-      console.table(formik.values);
-    }
-  };
 
   const runTabValidation = (tab) => {
     switch (tab) {
@@ -63,6 +72,16 @@ const App = () => {
     }
   };
 
+  const lockForProofing = async () => {
+    const errors = await formik.validateForm();
+    if (!isEmpty(errors)) {
+      await formik.setTouched(setNestedObjectValues(errors, true));
+      setActiveTab('schedule')
+      console.table(formik.values);
+    }
+  };
+
+
   const onChange = (key) => {
     runTabValidation(activeTab);
     setActiveTab(key);
@@ -71,6 +90,7 @@ const App = () => {
   const errorKeys = Object.keys(formik.errors)
 
   useEffect(() => {
+    console.log('useEffect ran');
     const tabErrorStateTouched = Object.keys(formik.touched).reduce(
         (tabErrorState, touched) => {
           if (!tabErrorState.scheduleTabInvalid) {
