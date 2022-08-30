@@ -8,26 +8,28 @@ import * as Yup from 'yup';
 import { isEmpty } from 'lodash';
 const { TabPane } = Tabs;
 
+const scheduleFieldsValidation = {
+  scheduleTabInput: Yup.string().matches(/^(hi|bye)$/, 'field must either be "hi" or "bye"').required('Required'),
+  scheduleTabSelect: Yup.string().required('Required'),
+  scheduleTabDynamicField: Yup.array().of(
+      Yup.string().required('Dynamic Field Required')
+  )
+}
+
 const scheduleFields = {
   scheduleTabInput: '',
   scheduleTabSelect: '',
   scheduleTabDynamicField: ['field1'],
-  validation: {
-    scheduleTabInput: Yup.string().matches(/^(hi|bye)$/, 'field must either be "hi" or "bye"').required('Required'),
-    scheduleTabSelect: Yup.string().required('Required'),
-    scheduleTabDynamicField: Yup.array().of(
-        Yup.string().required('Dynamic Field Required')
-    )
-  }
+}
+
+const audienceFieldsValidation = {
+  audienceTabInput: Yup.string().required('Required'),
+  audienceTabSelect: Yup.string().required('Required'),
 }
 
 const audienceFields = {
   audienceTabSelect: '',
   audienceTabInput: '',
-  validation: {
-    audienceTabInput: Yup.string().required('Required'),
-    audienceTabSelect: Yup.string().required('Required'),
-  }
 }
 
 // should be enum but this repo is not using typescript
@@ -50,8 +52,8 @@ const App = () => {
   });
 
   const validationSchema = Yup.object().shape({
-    ...scheduleFields.validation,
-    ...audienceFields.validation,
+    ...scheduleFieldsValidation.validation,
+    ...audienceFieldsValidation.validation,
   });
 
   const formik = useFormik({
@@ -65,16 +67,20 @@ const App = () => {
   const runTabValidation = (tab) => {
     switch (tab) {
       case 'scheduleTab':
-        formik.validateField('scheduleTabInput');
-        formik.setFieldTouched('scheduleTabInput', true);
-        formik.validateField('scheduleTabSelect');
-        formik.setFieldTouched('scheduleTabSelect', true);
+          for (const field of Object.keys(fieldConfig.schedule)) {
+            if (field !== 'validation') {
+              formik.validateField(field);
+              formik.setFieldTouched(field);
+            }
+          }
         break;
       case 'audienceTab':
-        formik.validateField('audienceTabInput');
-        formik.setFieldTouched('audienceTabInput', true);
-        formik.validateField('audienceTabSelect');
-        formik.setFieldTouched('audienceTabSelect', true);
+        for (const field of Object.keys(fieldConfig.audience)) {
+          if (field !== 'validation') {
+            formik.validateField(field);
+            formik.setFieldTouched(field);
+          }
+        }
         break;
       default:
         break;
@@ -110,7 +116,7 @@ const App = () => {
         }
       }
     }
-    console.log('tabErrorState2', tabErrorState2)
+    // console.log('tabErrorState2', tabErrorState2)
 
     setTabErrorState(tabErrorState2);
   }, [formik?.errors, setTabErrorState, activeTab]);
